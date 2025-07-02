@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夏休み特別企画：生成AIでゲームを作ろう！</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ファーストビュー -->
+    <header id="hero" class="hero">
+        <div class="hero-bg">
+            <div class="grid-overlay"></div>
+            <div class="floating-elements">
+                <div class="floating-cube"></div>
+                <div class="floating-cube"></div>
+                <div class="floating-cube"></div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">夏休み特別企画</div>
+                <h1 class="hero-title">
+                    <span class="title-line1">君も今日から</span>
+                    <span class="title-line2">ゲームクリエイター！</span>
+                </h1>
+                <div class="hero-subtitle">生成AIを使って、オリジナルゲームを作ってみよう</div>
+                <div class="hero-info">
+                    <div class="info-item">
+                        <span class="info-label">開催日</span>
+                        <span class="info-value">7月31日(水)</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">時間</span>
+                        <span class="info-value">12:00-15:00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">定員</span>
+                        <span class="info-value">40名限定</span>
+                    </div>
+                </div>
+                <a href="#application" class="cta-button">
+                    <span class="cta-text">今すぐ申し込む</span>
+                    <span class="cta-arrow">→</span>
+                </a>
+                <p class="hero-note">※定員になり次第締切</p>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>SCROLL</span>
+            <div class="scroll-line"></div>
+        </div>
+    </header>
+
+    <!-- こんな子におすすめ -->
+    <section id="target" class="section target-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">TARGET</span>
+                <span class="title-ja">こんな子におすすめ</span>
+            </h2>
+            <div class="target-grid">
+                <div class="target-card">
+                    <div class="card-icon">🎮</div>
+                    <h3>ゲームが大好き</h3>
+                    <p>ゲームで遊ぶだけじゃなく、作ってみたい！</p>
+                </div>
+                <div class="target-card">
+                    <div class="card-icon">💻</div>
+                    <h3>プログラミングに興味がある</h3>
+                    <p>最新のAI技術を使ったプログラミングを体験できる</p>
+                </div>
+                <div class="target-card">
+                    <div class="card-icon">🚀</div>
+                    <h3>新しい技術を学びたい</h3>
+                    <p>話題の生成AIを実際に使ってみよう</p>
+                </div>
+                <div class="target-card">
+                    <div class="card-icon">📚</div>
+                    <h3>自由研究のテーマを探している</h3>
+                    <p>AIとゲーム制作で最高の自由研究に！</p>
+                </div>
+                <div class="target-card">
+                    <div class="card-icon">🎨</div>
+                    <h3>創作活動が好き</h3>
+                    <p>自分だけのオリジナルゲームを作ろう</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 教室で学べること -->
+    <section id="learn" class="section learn-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">WHAT YOU'LL LEARN</span>
+                <span class="title-ja">教室で学べること</span>
+            </h2>
+            <div class="learn-grid">
+                <div class="learn-item">
+                    <div class="learn-number">01</div>
+                    <h3>生成AIの基礎知識</h3>
+                    <p>AIなどの生成AIがどのように動くのか、基本的な仕組みを分かりやすく解説します。</p>
+                </div>
+                <div class="learn-item">
+                    <div class="learn-number">02</div>
+                    <h3>AIを使ったゲーム制作手法</h3>
+                    <p>AIを活用してキャラクターデザイン、ストーリー作成、プログラミングを効率的に行う方法を学びます。</p>
+                </div>
+                <div class="learn-item">
+                    <div class="learn-number">03</div>
+                    <h3>実際のツールの使い方</h3>
+                    <p>実際にAIツールを操作しながら、ゲーム制作の各工程を体験します。</p>
+                </div>
+                <div class="learn-item">
+                    <div class="learn-number">04</div>
+                    <h3>自由研究での活用方法</h3>
+                    <p>作ったゲームを自由研究として発表するためのまとめ方、プレゼンテーションの方法も指導します。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- タイムスケジュール -->
+    <section id="schedule" class="section schedule-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">TIME SCHEDULE</span>
+                <span class="title-ja">当日のタイムスケジュール</span>
+            </h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">12:00 - 12:30</div>
+                    <div class="timeline-content">
+                        <h3>生成AIの基礎講座</h3>
+                        <p>AIの仕組みと可能性について楽しく学ぼう</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">12:30 - 14:30</div>
+                    <div class="timeline-content">
+                        <h3>ゲーム制作体験</h3>
+                        <p>実際にAIを使ってオリジナルゲームを作成</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">14:30 - 15:00</div>
+                    <div class="timeline-content">
+                        <h3>作品発表・質疑応答</h3>
+                        <p>みんなの作品を共有して、講師への質問タイム</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 講師紹介 -->
+    <section id="instructor" class="section instructor-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">INSTRUCTOR</span>
+                <span class="title-ja">講師紹介</span>
+            </h2>
+            <div class="instructor-card">
+                <div class="instructor-info">
+                    <h3>三森 講師</h3>
+                    <p class="instructor-company">ランドブリッジ株式会社</p>
+                    <div class="instructor-bio">
+                        <p>AI技術とゲーム開発の専門家として、数多くのプロジェクトに携わる。</p>
+                        <p>最新の生成AI技術を活用した開発手法に精通し、子供向けのプログラミング教育にも豊富な経験を持つ。</p>
+                        <p>「難しい技術も楽しく学べる」をモットーに、分かりやすい指導で定評がある。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 開催概要 -->
+    <section id="overview" class="section overview-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">EVENT OVERVIEW</span>
+                <span class="title-ja">開催概要</span>
+            </h2>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <div class="overview-label">日時</div>
+                    <div class="overview-value">7月31日（水）12:00-15:00</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">定員</div>
+                    <div class="overview-value">40名（先着順）</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">対象</div>
+                    <div class="overview-value">小学生〜高校生</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">参加費</div>
+                    <div class="overview-value">3,000円（税込）</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">会場</div>
+                    <div class="overview-value">東京都渋谷区○○ビル 3F<br>イベントスペース</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">持ち物</div>
+                    <div class="overview-value">筆記用具のみ<br>（PCは会場で用意）</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 申し込みフォーム -->
+    <section id="application" class="section application-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">APPLICATION</span>
+                <span class="title-ja">お申し込み</span>
+            </h2>
+            <div class="form-wrapper">
+                <form id="applicationForm" class="application-form">
+                    <div class="form-group">
+                        <label for="childName">参加者氏名 <span class="required">必須</span></label>
+                        <input type="text" id="childName" name="childName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="grade">学年 <span class="required">必須</span></label>
+                        <select id="grade" name="grade" required>
+                            <option value="">選択してください</option>
+                            <option value="小学1年生">小学1年生</option>
+                            <option value="小学2年生">小学2年生</option>
+                            <option value="小学3年生">小学3年生</option>
+                            <option value="小学4年生">小学4年生</option>
+                            <option value="小学5年生">小学5年生</option>
+                            <option value="小学6年生">小学6年生</option>
+                            <option value="中学1年生">中学1年生</option>
+                            <option value="中学2年生">中学2年生</option>
+                            <option value="中学3年生">中学3年生</option>
+                            <option value="高校1年生">高校1年生</option>
+                            <option value="高校2年生">高校2年生</option>
+                            <option value="高校3年生">高校3年生</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentName">保護者氏名 <span class="required">必須</span></label>
+                        <input type="text" id="parentName" name="parentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">電話番号 <span class="required">必須</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="090-1234-5678" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">メールアドレス <span class="required">必須</span></label>
+                        <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">アレルギー・注意事項等</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="アレルギーや配慮が必要な事項がありましたらご記入ください"></textarea>
+                    </div>
+                    <button type="submit" class="submit-button">
+                        <span>申し込む</span>
+                    </button>
+                </form>
+                <div id="formMessage" class="form-message"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- よくある質問 -->
+    <section id="faq" class="section faq-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-en">FAQ</span>
+                <span class="title-ja">よくある質問</span>
+            </h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-q">Q</span>
+                        <h3>プログラミング未経験でも大丈夫ですか？</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>はい、大丈夫です！生成AIを使うことで、プログラミング未経験でも簡単にゲームを作ることができます。講師が丁寧にサポートしますので、安心してご参加ください。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-q">Q</span>
+                        <h3>持参するものはありますか？</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>筆記用具のみお持ちください。パソコンは会場でご用意いたします。作成したゲームはUSBメモリやクラウドで持ち帰ることができます。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-q">Q</span>
+                        <h3>保護者の同伴は必要ですか？</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>小学生の参加者は、送迎をお願いいたします。教室中の同伴は必須ではありませんが、見学を希望される場合は事前にお知らせください。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-q">Q</span>
+                        <h3>作ったゲームは持ち帰れますか？</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>はい、作成したゲームのデータはお持ち帰りいただけます。自宅でも継続して開発を進めることができ、自由研究の作品として活用できます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4>主催</h4>
+                    <p>ランドブリッジ株式会社</p>
+                </div>
+                <div class="footer-contact">
+                    <h4>お問い合わせ</h4>
+                    <p>Email: info@example.com</p>
+                    <p>Tel: 03-1234-5678</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ランドブリッジ株式会社. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
