@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { saveApplication, isSupabaseConfigured } from "@/lib/supabase";
+import ThankYouModal from "./ThankYouModal";
 
 export default function ApplicationForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ export default function ApplicationForm() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -108,19 +111,46 @@ export default function ApplicationForm() {
         });
       }
 
-      // 申し込みデータをローカルストレージに保存
-      const applicationData = {
-        id: Date.now().toString(),
-        ...formData,
-        createdAt: new Date().toISOString()
-      };
-      
-      const existingApplications = JSON.parse(localStorage.getItem('workshop_applications') || '[]');
-      existingApplications.push(applicationData);
-      localStorage.setItem('workshop_applications', JSON.stringify(existingApplications));
+      // Supabaseが設定されている場合はSupabaseに保存、そうでなければLocalStorage
+      if (isSupabaseConfigured()) {
+        const result = await saveApplication({
+          child_name: formData.childName,
+          grade: formData.grade,
+          parent_name: formData.parentName || undefined,
+          phone: formData.phone,
+          email: formData.email,
+          participant_count: parseInt(formData.participantCount),
+          notes: formData.notes || undefined,
+        });
 
-      // 成功メッセージを表示
-      setMessage("お申し込みありがとうございます！確認メールをお送りしました。");
+        if (!result.success) {
+          console.error('Supabase保存エラー、LocalStorageにフォールバック');
+          // フォールバック: LocalStorageに保存
+          const applicationData = {
+            id: Date.now().toString(),
+            ...formData,
+            createdAt: new Date().toISOString()
+          };
+          
+          const existingApplications = JSON.parse(localStorage.getItem('workshop_applications') || '[]');
+          existingApplications.push(applicationData);
+          localStorage.setItem('workshop_applications', JSON.stringify(existingApplications));
+        }
+      } else {
+        // Supabaseが設定されていない場合はLocalStorageに保存
+        const applicationData = {
+          id: Date.now().toString(),
+          ...formData,
+          createdAt: new Date().toISOString()
+        };
+        
+        const existingApplications = JSON.parse(localStorage.getItem('workshop_applications') || '[]');
+        existingApplications.push(applicationData);
+        localStorage.setItem('workshop_applications', JSON.stringify(existingApplications));
+      }
+
+      // 成功モーダルを表示
+      setShowThankYouModal(true);
       setFormData({
         childName: "",
         grade: "",
@@ -315,6 +345,12 @@ export default function ApplicationForm() {
           )}
         </div>
       </div>
+
+      {/* サンキューモーダル */}
+      <ThankYouModal 
+        isOpen={showThankYouModal} 
+        onClose={() => setShowThankYouModal(false)} 
+      />
     </section>
   );
 }

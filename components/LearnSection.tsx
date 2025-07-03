@@ -26,7 +26,7 @@ export default function LearnSection() {
     <section id="learn" className="py-20 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <span className="text-sm font-bold text-cyber-blue tracking-wider">WHAT YOU'LL LEARN</span>
+          <span className="text-sm font-bold text-cyber-blue tracking-wider">WHAT YOU&apos;LL LEARN</span>
           <h2 className="text-4xl md:text-5xl font-bold mt-2">教室で学べること</h2>
         </div>
         

@@ -2,17 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { getApplications, searchApplications, deleteApplication, isSupabaseConfigured } from '@/lib/supabase'
 
 interface Application {
   id: string
-  childName: string
+  childName?: string
+  child_name?: string
   grade: string
-  parentName: string
+  parentName?: string
+  parent_name?: string
   phone: string
   email: string
-  participantCount: string
-  notes: string
-  createdAt: string
+  participantCount?: string
+  participant_count?: number
+  notes?: string
+  createdAt?: string
+  created_at?: string
 }
 
 export default function AdminDashboard() {
@@ -23,17 +28,41 @@ export default function AdminDashboard() {
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [activeTab, setActiveTab] = useState<'applications' | 'settings'>('applications')
   const [instructorImage, setInstructorImage] = useState<string>('/mimori-profile.png')
+  const [isSearching, setIsSearching] = useState(false)
   const router = useRouter()
 
   // 簡易認証
   const ADMIN_PASSWORD = 'admin2025' // 実際の運用では環境変数に設定
 
   useEffect(() => {
-    // ローカルストレージから申し込みデータを取得
-    const loadApplications = () => {
-      const saved = localStorage.getItem('workshop_applications')
-      if (saved) {
-        setApplications(JSON.parse(saved))
+    // 申し込みデータを取得
+    const loadApplications = async () => {
+      if (isSupabaseConfigured()) {
+        // Supabaseから取得
+        const result = await getApplications()
+        if (result.success && result.data) {
+          // Supabaseのデータ形式をローカルの形式に変換
+          const normalizedData = result.data.map((app: any) => ({
+            ...app,
+            childName: app.child_name || app.childName,
+            parentName: app.parent_name || app.parentName,
+            participantCount: app.participant_count?.toString() || app.participantCount,
+            createdAt: app.created_at || app.createdAt
+          }))
+          setApplications(normalizedData)
+        } else {
+          // エラー時はLocalStorageから取得
+          const saved = localStorage.getItem('workshop_applications')
+          if (saved) {
+            setApplications(JSON.parse(saved))
+          }
+        }
+      } else {
+        // Supabaseが設定されていない場合はLocalStorageから取得
+        const saved = localStorage.getItem('workshop_applications')
+        if (saved) {
+          setApplications(JSON.parse(saved))
+        }
       }
     }
 
@@ -47,6 +76,78 @@ export default function AdminDashboard() {
     }
   }, [isAuthenticated])
 
+  // 検索処理
+  useEffect(() => {
+    const performSearch = async () => {
+      if (!searchTerm) {
+        // 検索語句が空の場合は全件取得
+        if (isAuthenticated) {
+          const loadApplications = async () => {
+            if (isSupabaseConfigured()) {
+              const result = await getApplications()
+              if (result.success && result.data) {
+                const normalizedData = result.data.map((app: any) => ({
+                  ...app,
+                  childName: app.child_name || app.childName,
+                  parentName: app.parent_name || app.parentName,
+                  participantCount: app.participant_count?.toString() || app.participantCount,
+                  createdAt: app.created_at || app.createdAt
+                }))
+                setApplications(normalizedData)
+              }
+            } else {
+              const saved = localStorage.getItem('workshop_applications')
+              if (saved) {
+                setApplications(JSON.parse(saved))
+              }
+            }
+          }
+          loadApplications()
+        }
+        return
+      }
+
+      setIsSearching(true)
+      
+      if (isSupabaseConfigured()) {
+        // Supabaseで検索
+        const result = await searchApplications(searchTerm)
+        if (result.success && result.data) {
+          const normalizedData = result.data.map((app: any) => ({
+            ...app,
+            childName: app.child_name || app.childName,
+            parentName: app.parent_name || app.parentName,
+            participantCount: app.participant_count?.toString() || app.participantCount,
+            createdAt: app.created_at || app.createdAt
+          }))
+          setApplications(normalizedData)
+        }
+      } else {
+        // LocalStorageでフィルタリング（既存のfilteredApplicationsロジックを使用）
+        const saved = localStorage.getItem('workshop_applications')
+        if (saved) {
+          const allApps = JSON.parse(saved)
+          const filtered = allApps.filter((app: Application) => {
+            const childName = app.childName || ''
+            const parentName = app.parentName || ''
+            return (
+              childName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              app.phone.includes(searchTerm) ||
+              parentName.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+          })
+          setApplications(filtered)
+        }
+      }
+      
+      setIsSearching(false)
+    }
+
+    const debounceTimer = setTimeout(performSearch, 300)
+    return () => clearTimeout(debounceTimer)
+  }, [searchTerm, isAuthenticated])
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (password === ADMIN_PASSWORD) {
@@ -56,16 +157,51 @@ export default function AdminDashboard() {
     }
   }
 
-  const filteredApplications = applications.filter(app => 
-    app.childName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.phone.includes(searchTerm) ||
-    app.parentName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const handleDelete = async (id: string) => {
+    if (!confirm('この申込を削除してもよろしいですか？')) {
+      return
+    }
 
-  const totalParticipants = applications.reduce((sum, app) => 
-    sum + parseInt(app.participantCount), 0
-  )
+    if (isSupabaseConfigured()) {
+      const result = await deleteApplication(id)
+      if (result.success) {
+        // 再読み込み
+        const loadResult = await getApplications()
+        if (loadResult.success && loadResult.data) {
+          const normalizedData = loadResult.data.map((app: any) => ({
+            ...app,
+            childName: app.child_name || app.childName,
+            parentName: app.parent_name || app.parentName,
+            participantCount: app.participant_count?.toString() || app.participantCount,
+            createdAt: app.created_at || app.createdAt
+          }))
+          setApplications(normalizedData)
+        }
+        alert('削除しました')
+      } else {
+        console.error('削除エラー:', result.error)
+        alert('削除に失敗しました。\n\nエラー: ' + JSON.stringify(result.error))
+      }
+    } else {
+      // LocalStorageから削除
+      const saved = localStorage.getItem('workshop_applications')
+      if (saved) {
+        const apps = JSON.parse(saved)
+        const filtered = apps.filter((app: Application) => app.id !== id)
+        localStorage.setItem('workshop_applications', JSON.stringify(filtered))
+        setApplications(filtered)
+        alert('削除しました')
+      }
+    }
+  }
+
+  // 検索は既にuseEffectで処理されているため、applicationsをそのまま使用
+  const filteredApplications = applications
+
+  const totalParticipants = applications.reduce((sum, app) => {
+    const count = app.participantCount || app.participant_count?.toString() || '0'
+    return sum + parseInt(count)
+  }, 0)
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -159,14 +295,14 @@ export default function AdminDashboard() {
       headers.join(','),
       ...applications.map(app => [
         app.id,
-        app.childName,
+        app.childName || app.child_name || '',
         app.grade,
-        app.parentName || '',
+        app.parentName || app.parent_name || '',
         app.phone,
         app.email,
-        app.participantCount,
+        app.participantCount || app.participant_count || '',
         app.notes || '',
-        new Date(app.createdAt).toLocaleString('ja-JP')
+        new Date(app.createdAt || app.created_at || '').toLocaleString('ja-JP')
       ].map(field => `"${field}"`).join(','))
     ].join('\n')
 
@@ -271,10 +407,11 @@ export default function AdminDashboard() {
           <div className="flex gap-4 items-center">
             <input
               type="text"
-              placeholder="名前、メール、電話番号で検索..."
+              placeholder={isSearching ? "検索中..." : "名前、メール、電話番号で検索..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isSearching}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             />
             <button
               onClick={exportToCSV}
@@ -311,31 +448,39 @@ export default function AdminDashboard() {
                   filteredApplications.map((app) => (
                     <tr key={app.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{app.childName}</div>
+                        <div className="text-sm font-medium text-gray-900">{app.childName || app.child_name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {app.grade}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {app.parentName || '-'}
+                        {app.parentName || app.parent_name || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{app.email}</div>
                         <div className="text-sm text-gray-500">{app.phone}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {app.participantCount}名
+                        {app.participantCount || app.participant_count}名
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(app.createdAt).toLocaleString('ja-JP')}
+                        {new Date(app.createdAt || app.created_at || '').toLocaleString('ja-JP')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => setSelectedApplication(app)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          詳細
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setSelectedApplication(app)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            詳細
+                          </button>
+                          <button
+                            onClick={() => handleDelete(app.id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            削除
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -396,6 +541,24 @@ export default function AdminDashboard() {
                 <li>元の画像に戻したい場合は、再度アップロードしてください</li>
               </ul>
             </div>
+
+            <div className="border-t pt-6 mt-6">
+              <h3 className="text-lg font-medium mb-4">データ管理</h3>
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                <div>
+                  <p className="font-medium">LocalStorage → Supabase 移行</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    既存のLocalStorageデータをSupabaseに移行します
+                  </p>
+                </div>
+                <button
+                  onClick={() => router.push('/admin/migrate')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                  移行ツールを開く
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -408,7 +571,7 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <div>
                 <label className="text-sm text-gray-500">参加者名</label>
-                <p className="font-medium">{selectedApplication.childName}</p>
+                <p className="font-medium">{selectedApplication.childName || selectedApplication.child_name}</p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">学年</label>
@@ -416,7 +579,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="text-sm text-gray-500">保護者名</label>
-                <p className="font-medium">{selectedApplication.parentName || '-'}</p>
+                <p className="font-medium">{selectedApplication.parentName || selectedApplication.parent_name || '-'}</p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">電話番号</label>
@@ -428,7 +591,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="text-sm text-gray-500">参加人数</label>
-                <p className="font-medium">{selectedApplication.participantCount}名</p>
+                <p className="font-medium">{selectedApplication.participantCount || selectedApplication.participant_count}名</p>
               </div>
               {selectedApplication.notes && (
                 <div>
@@ -438,15 +601,26 @@ export default function AdminDashboard() {
               )}
               <div>
                 <label className="text-sm text-gray-500">申込日時</label>
-                <p className="font-medium">{new Date(selectedApplication.createdAt).toLocaleString('ja-JP')}</p>
+                <p className="font-medium">{new Date(selectedApplication.createdAt || selectedApplication.created_at || '').toLocaleString('ja-JP')}</p>
               </div>
             </div>
-            <button
-              onClick={() => setSelectedApplication(null)}
-              className="mt-6 w-full py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-            >
-              閉じる
-            </button>
+            <div className="mt-6 flex gap-2">
+              <button
+                onClick={() => setSelectedApplication(null)}
+                className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                閉じる
+              </button>
+              <button
+                onClick={() => {
+                  handleDelete(selectedApplication.id)
+                  setSelectedApplication(null)
+                }}
+                className="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                削除
+              </button>
+            </div>
           </div>
         </div>
       )}

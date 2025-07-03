@@ -2,8 +2,5 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "npm install",
-  "env": {
-    "NEXT_PUBLIC_SLACK_WEBHOOK_URL": "@slack_webhook_url"
-  }
+  "installCommand": "npm install"
 }
