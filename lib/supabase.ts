@@ -8,17 +8,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase環境変数が設定されていません。SUPABASE_SETUP.mdを参照してください。')
 }
 
-// Supabaseクライアントの作成
-export const supabase = createClient(
-  supabaseUrl || '',
-  supabaseAnonKey || '',
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  }
-)
+// Supabaseクライアントの作成（環境変数が設定されている場合のみ）
+export const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+      }
+    )
+  : null as any
 
 // 申込データの型定義
 export interface Application {
@@ -36,6 +38,10 @@ export interface Application {
 
 // 申込データを保存
 export async function saveApplication(data: Omit<Application, 'id' | 'created_at' | 'updated_at'>) {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' }
+  }
+  
   try {
     const { data: result, error } = await supabase
       .from('applications')
@@ -53,6 +59,10 @@ export async function saveApplication(data: Omit<Application, 'id' | 'created_at
 
 // 申込データを取得
 export async function getApplications() {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured', data: [] }
+  }
+  
   try {
     const { data, error } = await supabase
       .from('applications')
@@ -69,6 +79,10 @@ export async function getApplications() {
 
 // 申込データを検索
 export async function searchApplications(searchTerm: string) {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured', data: [] }
+  }
+  
   try {
     const { data, error } = await supabase
       .from('applications')
@@ -86,6 +100,10 @@ export async function searchApplications(searchTerm: string) {
 
 // 申込データを削除（管理者のみ）
 export async function deleteApplication(id: string) {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' }
+  }
+  
   try {
     const { error } = await supabase
       .from('applications')
