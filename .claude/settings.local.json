@@ -18,7 +18,9 @@
       "Bash(grep:*)",
       "Bash(pkill:*)",
       "Bash(true)",
-      "Bash(vercel:*)"
+      "Bash(vercel:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:study-session-qi95m8sob-land-bridge.vercel.app)"
     ],
     "deny": []
   }
